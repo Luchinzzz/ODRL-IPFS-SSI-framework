@@ -6,7 +6,6 @@
 - [Setup](#setup)
 - [How to use](#how-to-use)
 - [Technologies](#technologies)
-- [Bibliography](#bibliography)
 - [License](#license)
 
 ## :books: Description <a name="description"/>
@@ -34,8 +33,10 @@ Project is created with:
 * [TypeScript](https://www.typescriptlang.org/)
 * [Node.js](https://nodejs.org/en)
 * [Solidity](https://docs.soliditylang.org/en/v0.8.33/)
+* [Helia IPFS](https://github.com/ipfs/helia)
+*
 
 
 ## :balance_scale: License <a name="license"/>
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details
+This project is licensed under the Apache License - see the [LICENSE.md](LICENSE) file for details
 
