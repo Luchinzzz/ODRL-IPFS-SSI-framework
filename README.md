@@ -1,4 +1,4 @@
-# :arrows_clockwise: ODRL-IPFS
+# :arrows_clockwise: ODRL-IPFS-SSI Framework
 
 ## :pencil: Table of contents
 
@@ -9,6 +9,7 @@
 - [License](#license)
 
 ## :books: Description <a name="description"/>
+This repository implements a proof-of-concept framework that integrates ODRL policy management, decentralized storage, and blockchain-based enforcement within a Self-Sovereign Identity (SSI) ecosystem. ODRL policies defining the Terms of Use (ToU) of Verifiable Credentials (VCs) are stored as JSON-LD documents on IPFS and automatically translated into Solidity smart contracts (Smart Policies) deployable on any EVM-compatible blockchain.
 
 ## :gear: Setup <a name="setup"/>
 
