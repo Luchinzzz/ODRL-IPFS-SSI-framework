@@ -70,25 +70,21 @@ router.post('/hash/json', (req: Request, res: Response) => {
 /**
  * POST /vc/hash/bytecode
  * Computes the SHA-256 hash of a bytecode (hex string, with or without 0x prefix).
- * The bytecode is hashed as raw bytes (decoded from hex), not as a text string.
  */
 router.post('/hash/bytecode', (req: Request, res: Response) => {
     try {
         const { bytecode } = req.body as BytecodeHashRequest;
-
         if (!bytecode || typeof bytecode !== 'string') {
             return res.status(400).json({ error: 'Missing or invalid "bytecode" field' });
         }
+        
         const normalized = bytecode.startsWith('0x') ? bytecode.slice(2) : bytecode;
-
         if (!/^[0-9a-fA-F]*$/.test(normalized) || normalized.length % 2 !== 0) {
-        return res.status(400).json({ error: 'Bytecode is not a valid hex string' });
+            return res.status(400).json({ error: 'Bytecode is not a valid hex string' });
         }
-
-        const buffer = Buffer.from(bytecode, 'hex');
-        const hash = createHash('sha256').update(buffer).digest('hex');
-
-        return res.json({ hash: `${hash}` });
+        
+        const hash = createHash('sha256').update(bytecode).digest('hex');
+        return res.json({ hash });
     } catch (err: any) {
         return res.status(500).json({ error: err.message });
     }
