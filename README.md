@@ -34,7 +34,7 @@ Project is created with:
 * [Node.js](https://nodejs.org/en)
 * [Solidity](https://docs.soliditylang.org/en/v0.8.33/)
 * [Helia IPFS](https://github.com/ipfs/helia)
-*
+* [Express](https://expressjs.com/en/)
 
 
 ## :balance_scale: License <a name="license"/>

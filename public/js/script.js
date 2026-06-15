@@ -234,12 +234,13 @@ async function deployContract() {
     const d = await r.json();
     if (!r.ok) throw new Error(d.error);
 
-    log(`Deploy OK — ${d.contractName} @ ${d.contractAddress}`, "ok");
+    log(`Deploy OK — ${d.contractName} @ ${d.contractAddress} (signer: ${d.signerAddress})`, "ok");
     showToast("Contract deployed!");
 
     const preview = {
       contractName:    d.contractName,
       contractAddress: d.contractAddress,
+      signerAddress:   d.signerAddress,   // ← nuovo
       abiMethods: d.abi.filter(x => x.type === "function").map(x => x.name),
       bytecode: d.bytecode,
     };

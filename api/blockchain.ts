@@ -144,6 +144,7 @@ router.get("/status", async (req, res) => {
   }
 });
 
+
 // ─── POST /deploy ──────────────────────────────────────────────────
 router.post("/deploy", async (req, res) => {
   if (!hardhatProcess) {
@@ -153,7 +154,6 @@ router.post("/deploy", async (req, res) => {
   }
 
   const { contractPath, constructorArgs = [] } = req.body;
-
   if (!contractPath) {
     return res.status(400).json({
       error: "Missing source path",
@@ -161,85 +161,84 @@ router.post("/deploy", async (req, res) => {
   }
 
   try {
-    // path assoluto file .sol
     const contractPath2 = path.resolve(contractPath);
-
-    // verifica file esiste
     if (!fs.existsSync(contractPath2)) {
       return res.status(404).json({
         error: "Solidity file not found",
       });
     }
 
-    // nome file
     const fileName = path.basename(contractPath2);
-
-    // nome contratto
     const sourceCode = fs.readFileSync(contractPath2, "utf8");
-
     const match = sourceCode.match(/contract\s+([A-Za-z0-9_]+)/);
-
-    if (!match) {
-      throw new Error("Unable to detect contract name");
-    }
-
+    if (!match) throw new Error("Unable to detect contract name");
     const contractName = match[1];
 
-    // compile hardhat
     const hardhatDir = path.join(process.cwd(), "hardhat");
+    execSync("npx hardhat compile", { cwd: hardhatDir, stdio: "pipe" });
 
-    execSync("npx hardhat compile", {
-      cwd: hardhatDir,
-      stdio: "pipe",
-    });
-
-    // artifact path
     const artifactPath = path.join(
       hardhatDir,
       "artifacts",
       "contracts",
       fileName,
-      `${contractName}.json`,
+      `${contractName}.json`
     );
-
     const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf8"));
-
     const abi = artifact.abi;
     const bytecode = artifact.bytecode;
 
-    // provider
     const provider = getProvider();
-
-    // signer
     const accounts = await provider.listAccounts();
 
-    const signer = await provider.getSigner(accounts[0].address);
+    // ─── Estimate gas for deployment ───────────────────────────────────
+    const factory0 = new ethers.ContractFactory(abi, bytecode);
+    const deployTx = await factory0.getDeployTransaction(...constructorArgs);
+    const estimatedGas = await provider.estimateGas(deployTx);
+    const gasPrice = (await provider.getFeeData()).gasPrice ?? ethers.parseUnits("1", "gwei");
+    const requiredFunds = estimatedGas * gasPrice;
 
-    // deploy
+    // ─── Find the first signer with sufficient funds ───────────────
+    let signer = null;
+    for (const account of accounts) {
+      const balance = await provider.getBalance(account.address);
+      if (balance >= requiredFunds) {
+        signer = await provider.getSigner(account.address);
+        console.log(`Using signer: ${account.address} (balance: ${ethers.formatEther(balance)} ETH)`);
+        break;
+      } else {
+        console.warn(`Skipping ${account.address}: insufficient funds (${ethers.formatEther(balance)} ETH, need ~${ethers.formatEther(requiredFunds)} ETH)`);
+      }
+    }
+
+    if (!signer) {
+      return res.status(400).json({
+        error: "No account with sufficient funds found for deployment",
+        requiredFunds: ethers.formatEther(requiredFunds) + " ETH",
+      });
+    }
+
+    // ─── Deploy ────────────────────────────────────────────────────
     const factory = new ethers.ContractFactory(abi, bytecode, signer);
-
     const contract = await factory.deploy(...constructorArgs);
-
     await contract.waitForDeployment();
-
     const address = await contract.getAddress();
 
     res.json({
       success: true,
       contractName,
       contractAddress: address,
+      signerAddress: await signer.getAddress(),
       abi,
       bytecode,
     });
   } catch (err: any) {
     console.error(err);
-
     res.status(500).json({
       error: err.message ?? "Deploy failed",
     });
   }
 });
-
 
 // API Contract Listing
 router.use('/contracts', express.static(contractsPath));
@@ -268,5 +267,6 @@ router.get('/contracts-list', (req, res) => {
   });
 
 });
+
 
 export default router;

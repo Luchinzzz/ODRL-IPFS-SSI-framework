@@ -78,39 +78,41 @@ function validateAllRules(
   let ruleNames: string[] = [];
   let conditions: string = "";
   let inputs;
-  let combinedValidation: string = "";
+  //let combinedValidation: string = "";
 
   for (const rule of rules) {
     if (rule.uid) {
       const ruleCode = createRuleCode(rule, type);
       validationFunctions += ruleCode.rules;
       inputs = ruleCode.inputs;
-      console.log(inputs);
-      console.log(ruleCode.combinedConstraintName);
+      //console.log(inputs);
+      //console.log(ruleCode.combinedConstraintName);
       if (ruleCode.conditions) {
         conditions += ruleCode.conditions;
       }
       for (let i in ruleCode.combinedConstraintName) {
         ruleNames.push(i);
-        console.log(ruleNames);
+        //console.log(ruleNames);
       }
     }
   }
 
-  if (ruleNames.length >= 2) {
-    combinedValidation = `
-    function validateAll${type.charAt(0).toUpperCase() + type.slice(1)}(${inputs}) public view returns (bool) {
-        return ${ruleNames.join(" && ")};
-    }
-    `;
-  } else {
-    combinedValidation = `
-        function validateAll${type.charAt(0).toUpperCase() + type.slice(1)}(${inputs}) public view returns (bool) {
-            return ${ruleNames};
-        }
-        `;
-  }
-  return validationFunctions + conditions + combinedValidation;
+  // if (ruleNames.length >= 2) {
+  //   combinedValidation = `
+  //   function validateAll${type.charAt(0).toUpperCase() + type.slice(1)}(${inputs}) public view returns (bool) {
+  //       return ${ruleNames.join(" && ")};
+  //   }
+  //   `;
+  // } else {
+  //   combinedValidation = `
+  //       function validateAll${type.charAt(0).toUpperCase() + type.slice(1)}(${inputs}) public view returns (bool) {
+  //           return ${ruleNames};
+  //       }
+  //       `;
+  // }
+  //return validationFunctions + conditions + combinedValidation;
+  //return validationFunctions + conditions + combinedValidation;
+  return validationFunctions + conditions;
 }
 
 function createRuleCode(rule: RulePermission | RuleProhibition, type: string) {
@@ -125,7 +127,7 @@ function createRuleCode(rule: RulePermission | RuleProhibition, type: string) {
 
   if (rule.constraint) {
     const constraints: Constraint[] = rule.constraint;
-    console.log(constraints);
+    //console.log(constraints);
     const constraintMap = exploreConstraints(constraints, idRule);
 
     rules += constraintMap.constraintsCode;
@@ -147,7 +149,7 @@ function createRuleCode(rule: RulePermission | RuleProhibition, type: string) {
         constraintMap.constraintNames[cname],
       );
     }
-    if (rule.logicalConstraints) {
+    if (rule.logicalConstraints && rule.logicalConstraints.length > 1) {
       const logicalConstraints: LogicalConstraint[] = rule.logicalConstraints;
       let logicalConstraintCode = exploreLogicalConstraints(
         logicalConstraints,
@@ -164,7 +166,7 @@ function createRuleCode(rule: RulePermission | RuleProhibition, type: string) {
         combinedConstraintName.add(combinedConstrainMap.combinedConstraints);
       }
     } else {
-      console.log(defaultLogicalConstraints);
+      //console.log(defaultLogicalConstraints);
       let logicalConstraintCode = exploreLogicalConstraints(
         defaultLogicalConstraints,
         constraintMap,
@@ -209,7 +211,7 @@ function createRuleCode(rule: RulePermission | RuleProhibition, type: string) {
     }
   }
 
-  console.log(rules);
+  //console.log(rules);
   return { rules, conditions, combinedConstraintName, inputs };
 }
 
@@ -285,31 +287,3 @@ export function generateSolidityContract(policy: any, fileName?: string): string
     `;
 }
 
-// // Look for a specific value in JSON
-// try {
-//   // Using process.env.NODE_ARG works for Linux and Windows shells
-//   const filePath = process.env.NODE_ARG || "./json/examples/example-20cs.json";
-//   const fileName = path.basename(filePath, path.extname(filePath))?.replace(/[^a-zA-Z0-9]/g, "");
-//   const policy: ODRLPolicy = exploreODRLpolicy(filePath);
-//   //  const policy: ODRLPolicy = json.policy;
-
-//   // Validate policy data
-//   if (!policy) {
-//     throw new Error("Invalid policy data");
-//   }
-
-//   // Generate the Solidity contract
-//   const solidityCode = generateSolidityContract(policy, fileName);
-
-//   // Save the contract to a file
-//   // Save in hardhat folder
-//   fs.writeFileSync("../hardhat/contracts/" + fileName + ".sol", solidityCode);
-
-//   console.log("Solidity contract " + fileName + " successfully generated!");
-// } catch (error) {
-//   if (error instanceof Error) {
-//     console.error("Error during Solidity contract generation:", error.message);
-//   } else {
-//     console.error("Error during Solidity contract generation:", error);
-//   }
-// }

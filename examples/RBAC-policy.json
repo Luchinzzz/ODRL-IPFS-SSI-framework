@@ -16,7 +16,7 @@
                     "leftOperand": "location",
                     "operator": "lt",
                     "rightOperand": {
-                        "value": "on-campus",
+                        "value": "off-campus",
                         "@type": "xsd:string"
                     }
                 },
