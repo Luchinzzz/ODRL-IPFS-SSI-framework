@@ -1,0 +1,83 @@
+{
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+  "@type": "Offer",
+  "uid": "Policy:96142",
+  "permission": [
+    {
+      "target": "http://university.com/resource:student-prize",
+      "assigner": "http://issuer.com/0xd9145CCE52D386f254917e481eB44e9943F39138",
+      "assignee": {
+        "@type": "PartyCollection",
+        "partOf": {
+          "source": "UniPG students",
+          "logicalConstraints": [
+            {
+              "uid": "LC1",
+              "operand": "and",
+              "constraint": [
+                "C1",
+                "C2",
+                "C3",
+                "C4",
+                "C5"
+              ]
+            }
+          ],
+          "refinement": [
+            {
+              "uid": "C1",
+              "dataType": "xsd:string",
+              "leftOperand": "subjectRole",
+              "operator": "eq",
+              "rightOperand": {
+                "value": "bachelor student",
+                "@type": "xsd:string"
+              }
+            },
+            {
+              "uid": "C2",
+              "dataType": "xsd:integer",
+              "leftOperand": "gradeAverage",
+              "operator": "gteq",
+              "rightOperand": {
+                "value": "27",
+                "@type": "xsd:integer"
+              }
+            },
+            {
+              "uid": "C3",
+              "dataType": "xsd:integer",
+              "leftOperand": "gradeAverage",
+              "operator": "lteq",
+              "rightOperand": {
+                "value": "30",
+                "@type": "xsd:integer"
+              }
+            },
+            {
+              "uid": "C4",
+              "dataType": "xsd:integer",
+              "leftOperand": "enrollmentYear",
+              "operator": "lteq",
+              "rightOperand": {
+                "value": "3",
+                "@type": "xsd:integer"
+              }
+            },
+            {
+              "uid": "C5",
+              "dataType": "xsd:integer",
+              "leftOperand": "enrollmentYear",
+              "operator": "gteq",
+              "rightOperand": {
+                "value": "1",
+                "@type": "xsd:integer"
+              }
+            }
+          ]
+        }
+      },
+      "action": "use"
+    }
+  ]
+}

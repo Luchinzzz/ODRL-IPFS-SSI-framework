@@ -1,0 +1,138 @@
+{
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@type": "Offer",
+    "uid": "Policy:10cs",
+    "permission": [
+        {
+            "target": "http://university.com/resource:student-prize",
+            "assigner": "http://issuer.com/0xd9145CCE52D386f254917e481eB44e9943F39138",
+            "assignee": {
+                "@type": "PartyCollection",
+                "partOf": {
+                    "source": "UniPG students",
+                    "logicalConstraints": [
+                        {
+                            "uid": "LC1",
+                            "operand": "and",
+                            "constraint": [
+                                "C1",
+                                "C2",
+                                "C3",
+                                "C4",
+                                "C5",
+                                "C6",
+                                "C7",
+                                "C8",
+                                "C9",
+                                "C10"
+                            ]
+                        }
+                    ],
+                    "refinement": [
+                        {
+                            "uid": "C1",
+                            "dataType": "xsd:string",
+                            "leftOperand": "subjectRole",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "bachelor student",
+                                "@type": "xsd:string"
+                            }
+                        },
+                        {
+                            "uid": "C2",
+                            "dataType": "xsd:integer",
+                            "leftOperand": "gradeAverage",
+                            "operator": "gteq",
+                            "rightOperand": {
+                                "value": "27",
+                                "@type": "xsd:integer"
+                            }
+                        },
+                        {
+                            "uid": "C3",
+                            "dataType": "xsd:integer",
+                            "leftOperand": "gradeAverage",
+                            "operator": "lteq",
+                            "rightOperand": {
+                                "value": "30",
+                                "@type": "xsd:integer"
+                            }
+                        },
+                        {
+                            "uid": "C4",
+                            "dataType": "xsd:integer",
+                            "leftOperand": "enrollmentYear",
+                            "operator": "lteq",
+                            "rightOperand": {
+                                "value": "3",
+                                "@type": "xsd:integer"
+                            }
+                        },
+                        {
+                            "uid": "C5",
+                            "dataType": "xsd:integer",
+                            "leftOperand": "enrollmentYear",
+                            "operator": "gteq",
+                            "rightOperand": {
+                                "value": "1",
+                                "@type": "xsd:integer"
+                            }
+                        },
+                        {
+                            "uid": "C6",
+                            "dataType": "xsd:integer",
+                            "leftOperand": "age",
+                            "operator": "gt",
+                            "rightOperand": {
+                                "value": "18",
+                                "@type": "xsd:integer"
+                            }
+                        },
+                        {
+                            "uid": "C7",
+                            "dataType": "xsd:string",
+                            "leftOperand": "location",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "USA",
+                                "@type": "xsd:string"
+                            }
+                        },
+                        {
+                            "uid": "C8",
+                            "dataType": "xsd:string",
+                            "leftOperand": "role",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "admin",
+                                "@type": "xsd:string"
+                            }
+                        },
+                        {
+                            "uid": "C9",
+                            "dataType": "xsd:time",
+                            "leftOperand": "dateTime",
+                            "operator": "lt",
+                            "rightOperand": {
+                                "value": "2023-12-31T23:59:59Z",
+                                "@type": "xsd:time"
+                            }
+                        },
+                        {
+                            "uid": "C10",
+                            "dataType": "xsd:string",
+                            "leftOperand": "subscription",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "premium",
+                                "@type": "xsd:string"
+                            }
+                        }
+                    ]
+                }
+            },
+            "action": "use"
+        }
+    ]
+}

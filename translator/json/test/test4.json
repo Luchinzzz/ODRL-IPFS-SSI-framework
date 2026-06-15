@@ -1,0 +1,45 @@
+{
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+  "@type": "Offer",
+  "uid": "http://example.com/policy:004",
+  "permission": [
+    {
+      "uid": "P1",
+      "target": "http://example.com/document:4",
+      "assigner": "http://example.com/org:1",
+      "action": "read",
+      "constraint": [
+        {
+          "uid": "C1",
+           "dataType": "xsd:string",
+          "leftOperand": "spatial",
+          "operator": "eq",
+          "rightOperand": {
+            "value": "IT",
+            "@type": "xsd:string"
+          }
+        },
+        {
+          "uid": "C2",
+           "dataType": "xsd:string",
+          "leftOperand": "spatial",
+          "operator": "eq",
+          "rightOperand": {
+            "value": "DE",
+            "@type": "xsd:string"
+          }
+        }
+      ],
+      "logicalConstraints": [
+        {
+          "uid": "LC1",
+          "operand": "or",
+          "constraint": [
+            "C1",
+            "C2"
+          ]
+        }
+      ]
+    }
+  ]
+}

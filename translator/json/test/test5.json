@@ -1,0 +1,63 @@
+{
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+  "@type": "Offer",
+  "uid": "http://example.com/policy:005",
+  "permission": [
+    {
+      "target": "http://example.com/document:5",
+      "assigner": "http://example.com/org:1",
+      "action": "use",
+      "uid": "P1",
+      "constraint": [
+        {
+          "uid": "C1",
+          "dataType": "xsd:string",
+          "leftOperand": "spatial",
+          "operator": "eq",
+          "rightOperand": {
+            "value": "IT",
+            "@type": "xsd:string"
+          }
+        },
+        {
+          "uid": "C2",
+          "dataType": "xsd:string",
+          "leftOperand": "spatial",
+          "operator": "eq",
+          "rightOperand": {
+            "value": "DE",
+            "@type": "xsd:string"
+          }
+        },
+        {
+          "uid": "C3",
+          "dataType": "xsd:time",
+          "leftOperand": "dateTime",
+          "operator": "lt",
+          "rightOperand": {
+            "value": "2025-12-31",
+            "@type": "xsd:date"
+          }
+        }
+      ],
+      "logicalConstraints": [
+        {
+          "uid": "LC1",
+          "operand": "or",
+          "constraint": [
+            "C1",
+            "C2"
+          ]
+        },
+        {
+          "uid": "LC2",
+          "operand": "and",
+          "constraint": [
+            "LC1",
+            "C3"
+          ]
+        }
+      ]
+    }
+  ]
+}

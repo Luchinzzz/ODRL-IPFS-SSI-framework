@@ -1,0 +1,55 @@
+{
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@type": "Offer",
+    "uid": "Policy:6163",
+    "permission": [
+        {
+            "uid": "P1",
+            "target": "http://PayApp.com/Page1",
+            "assigner": "http://Users.com/Userx",
+            "assignee": "http://Users.com/User2",
+            "action": "access",
+            "constraint": [
+                {
+                    "uid": "C1",
+                    "dataType": "xsd:string",
+                    "leftOperand": "location",
+                    "operator": "lt",
+                    "rightOperand": {
+                        "value": "on-campus",
+                        "@type": "xsd:string"
+                    }
+                },
+                {
+                    "uid": "C2",
+                    "dataType": "xsd:stringSet",
+                    "leftOperand": "project manager",
+                    "operator": "isPartOf",
+                    "rightOperand": {
+                        "value": "roles",
+                        "@type": "xsd:string"
+                    }
+                }
+            ]
+        },
+        {
+            "uid": "P2",
+            "target": "http://PayApp.com/Page1",
+            "assigner": "http://Users.com/Userx",
+            "assignee": "http://Users.com/User2",
+            "action": "access",
+            "constraint": [
+                {
+                    "uid": "C1",
+                    "dataType": "xsd:string",
+                    "leftOperand": "location",
+                    "operator": "lt",
+                    "rightOperand": {
+                        "value": "on-campus",
+                        "@type": "xsd:string"
+                    }
+                }
+            ]
+        }
+    ]
+}

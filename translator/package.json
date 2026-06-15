@@ -1,0 +1,30 @@
+{
+  "name": "translator",
+  "version": "1.0.0",
+  "description": "Translator for ToU policy written in ODRL to Solidity smart contract.",
+  "keywords": [
+    "ODRL",
+    "Solidity"
+  ],
+  "license": "ISC",
+  "author": "Chiara Luchini",
+  "type": "module",
+  "main": "ODRLtoSol.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": " cross-env NODE_ARG=$npm_config_name node --loader ts-node/esm ODRLtoSol.ts"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true
+  },
+  "dependencies": {
+    "@types/node": "^22.9.0"
+  }
+}

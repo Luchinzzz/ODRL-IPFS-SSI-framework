@@ -1,0 +1,45 @@
+{
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@type": "Offer",
+    "uid": "Policy:84112",
+    "permission": [
+        {
+            "uid": "P1",
+            "target": "http://vc.com/document:8541",
+            "assigner": "http://issuer.com/org:616",
+            "action": "read",
+            "logicalConstraints": [
+                {
+                    "uid": "LC1",
+                    "operand": "and",
+                    "constraint": [
+                        "C1",
+                        "C2"
+                    ]
+                }
+            ],
+            "constraint": [
+                {
+                    "uid": "C1",
+                    "dataType": "xsd:time",
+                    "leftOperand": "currentDateTime",
+                    "operator": "gteq",
+                    "rightOperand": {
+                        "value": "09:00:00",
+                        "@type": "xsd:time"
+                    }
+                },
+                {
+                    "uid": "C2",
+                    "dataType": "xsd:time",
+                    "leftOperand": "currentDateTime",
+                    "operator": "lteq",
+                    "rightOperand": {
+                        "value": "17:00:00",
+                        "@type": "xsd:time"
+                    }
+                }
+            ]
+        }
+    ]
+}

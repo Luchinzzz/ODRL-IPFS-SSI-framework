@@ -1,0 +1,96 @@
+{
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@type": "Offer",
+    "uid": "Policy:96142",
+    "profile": "http://hospitalexample.com/odrl:profile:183201",
+    "permission": [
+        {
+            "uid": "P1",
+            "target": "http://hospital.com/vc:patient:1",
+            "action": "read",
+            "assigner": "http://issuer.com/0xd91sqerfcdftghg44e9943F39138",
+            "assignee": {
+                "@type": "PartyCollection",
+                "partOf": {
+                    "source": "healthcare personnel",
+                    "logicalConstraints": [
+                        {
+                            "uid": "LC1",
+                            "operand": "and",
+                            "constraint": [
+                                "C1",
+                                "C2",
+                                "C3",
+                                "C4"
+                            ]
+                        }
+                    ],
+                    "refinement": [
+                        {
+                            "uid": "C1",
+                            "dataType": "xsd:string",
+                            "leftOperand": "role",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "doctor",
+                                "@type": "xsd:string"
+                            }
+                        },
+                        {
+                            "uid": "C2",
+                            "dataType": "xsd:string",
+                            "leftOperand": "department",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "cardiology",
+                                "@type": "xsd:string"
+                            }
+                        },
+                        {
+                            "uid": "C3",
+                            "dataType": "xsd:string",
+                            "leftOperand": "specialization",
+                            "operator": "eq",
+                            "rightOperand": {
+                                "value": "paediatrics",
+                                "@type": "xsd:integer"
+                            }
+                        },
+                        {
+                            "uid": "C4",
+                            "dataType": "xsd:integer",
+                            "leftOperand": "experience",
+                            "operator": "gteq",
+                            "rightOperand": {
+                                "value": "3",
+                                "@type": "xsd:integer"
+                            }
+                        }
+                    ]
+                }
+            },
+            "constraint": [
+                {
+                    "uid": "C5",
+                    "dataType": "xsd:time",
+                    "leftOperand": "dateTime",
+                    "operator": "gteq",
+                    "rightOperand": {
+                        "value": "09:00:00",
+                        "@type": "xsd:time"
+                    }
+                },
+                {
+                    "uid": "C6",
+                    "dataType": "xsd:time",
+                    "leftOperand": "dateTime",
+                    "operator": "lteq",
+                    "rightOperand": {
+                        "value": "17:00:00",
+                        "@type": "xsd:time"
+                    }
+                }
+            ]
+        }
+    ]
+}

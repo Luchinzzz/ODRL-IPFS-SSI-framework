@@ -1,0 +1,82 @@
+{
+    "@context": "http://www.w3.org/ns/odrl.jsonld",
+    "@type": "Agreement",
+    "type": "IssuerPolicy",
+    "uid": "http://example.com/policies/credential/4",
+    "profile": "http://example.com/profiles/credential",
+    "permission": [
+        {
+            "uid": "FirstPermission",
+            "target": "http://example.com/document:1234",
+            "assigner": "http://example.com/org:616",
+            "action": "distribute",
+            "logicalConstraints": [
+                {
+                    "uid": "LC1",
+                    "operand": "or",
+                    "constraint": [
+                        "C1",
+                        "C2"
+                    ]
+                },
+                {
+                    "uid": "LC2",
+                    "operand": "and",
+                    "constraint": [
+                        "C2",
+                        "C3"
+                    ]
+                },
+                {
+                    "uid": "LC3",
+                    "operand": "and",
+                    "constraint": [
+                        "C1",
+                        "C3"
+                    ]
+                }
+            ],
+            "constraint": [
+                {
+                    "uid": "C1",
+                    "dataType": "xsd:time",
+                    "leftOperand": "dateTime",
+                    "operator": "lt",
+                    "rightOperand": {
+                        "value": "09:00:00",
+                        "@type": "xsd:time"
+                    }
+                },
+                {
+                    "uid": "C2",
+                    "dataType": "xsd:string",
+                    "leftOperand": "name",
+                    "operator": "eq",
+                    "rightOperand": {
+                        "value": "Francesco",
+                        "@type": "xsd:string"
+                    }
+                },
+                {
+                    "uid": "C3",
+                    "dataType": "xsd:integer",
+                    "leftOperand": "age",
+                    "operator": "gt",
+                    "rightOperand": {
+                        "value": "18",
+                        "@type": "xsd:integer"
+                    }
+                }
+            ]
+        }
+    ],
+    "prohibition": [
+        {
+            "uid": "FirstProhibition",
+            "target": "http://example.com/photoAlbum:55",
+            "action": "archive",
+            "assigner": "http://example.com/MyPix:55",
+            "assignee": "http://example.com/assignee:55"
+        }
+    ]
+}

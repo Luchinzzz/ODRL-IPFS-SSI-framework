@@ -1,0 +1,44 @@
+{
+  "@context": "http://www.w3.org/ns/odrl.jsonld",
+  "@type": "Offer",
+  "uid": "http://example.com/policy:003",
+  "permission": [
+    {
+      "target": "http://example.com/document:3",
+      "assigner": "http://example.com/org:1",
+      "action": "write",
+      "constraint": [
+        {
+          "uid": "C1",
+          "dataType": "xsd:time",
+          "leftOperand": "dateTime",
+          "operator": "gt",
+          "rightOperand": {
+          "value": "2024-01-01",
+          "@type": "xsd:date"
+        }
+        },
+        {
+          "uid": "C2",
+          "dataType": "xsd:time",
+          "leftOperand": "dateTime",
+          "operator": "lt",
+          "rightOperand": {
+          "value": "2025-12-31",
+          "@type": "xsd:date"
+        }
+        }
+      ],
+      "logicalConstraints": [
+        {
+          "uid": "LC1",
+          "operand": "and",
+          "constraint": [
+            "C1",
+            "C2"
+          ]
+        }
+      ]
+    }
+  ]
+}

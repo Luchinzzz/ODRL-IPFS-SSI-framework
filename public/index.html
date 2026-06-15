@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ODRL Policy Manager</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <!-- Bootstrap (solo utility JS + componenti, no stile) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Dashboard stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ══════════════ HEADER ══════════════ -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="bi bi-shield-lock-fill" aria-hidden="true"></i>
+      </div>
+      <span class="brand-name">
+        ODRL SSI Policy
+        <span class="brand-sub">ODRL · SSI · IPFS</span>
+      </span>
+    </div>
+
+    <div class="header-right">
+      <div class="pill offline" id="status-pill">
+        <span class="status-dot"></span>
+        <span id="status-text">Offline Node</span>
+      </div>
+      <div class="pill" id="rpc-pill" style="display:none">
+        <i class="bi bi-ethernet" style="font-size:12px"></i>
+        <span id="rpc-url">—</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════ NAV TABS ══════════════ -->
+  <nav class="nav-tabs-bar" role="tablist" aria-label="Sezioni dashboard">
+    <div class="tab active" data-tab="node"        role="tab" aria-selected="true"  tabindex="0">
+      <i class="bi bi-cpu" aria-hidden="true"></i> Node
+    </div>
+    <div class="tab"        data-tab="policy"      role="tab" aria-selected="false" tabindex="1">
+      <i class="bi bi-file-earmark-text" aria-hidden="true"></i> Terms of Use
+    </div>
+    <div class="tab"        data-tab="hash"        role="tab" aria-selected="false" tabindex="2">
+      <i class="bi bi-hash" aria-hidden="true"></i> Hash
+    </div>
+    <div class="tab"        data-tab="ipfs"        role="tab" aria-selected="false" tabindex="3">
+      <i class="bi bi-cloud-upload" aria-hidden="true"></i> IPFS
+    </div>
+    <div class="tab"        data-tab="translate"   role="tab" aria-selected="false" tabindex="4">
+      <i class="bi bi-arrow-left-right" aria-hidden="true"></i> ODRL → Solidity
+    </div>
+    <div class="tab"        data-tab="deploy"      role="tab" aria-selected="false" tabindex="5">
+      <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Deploy
+    </div>
+  </nav>
+
+  <!-- ══════════════ MAIN ══════════════ -->
+  <main>
+
+    <!-- ── SIDEBAR (sempre visibile) ── -->
+    <aside class="sidebar">
+
+      <!-- Node Controls -->
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-server ch-icon" aria-hidden="true"></i>
+          Node Controls
+        </div>
+        <div class="card-body">
+          <div class="btn-group">
+            <button class="btn btn-primary btn-full" id="btn-start" onclick="startNode()">
+              <i class="bi bi-play-fill"></i> Start Node
+            </button>
+            <button class="btn btn-danger btn-full" id="btn-stop" onclick="stopNode()" disabled>
+              <i class="bi bi-stop-fill"></i> Stop Node
+            </button>
+            <button class="btn btn-full" onclick="fetchStatus()">
+              <i class="bi bi-arrow-clockwise"></i> Refresh Status
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chain Info -->
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-diagram-3 ch-icon" aria-hidden="true"></i>
+          Chain Info
+        </div>
+        <div class="metric-grid">
+          <div class="metric">
+            <div class="metric-label">Block</div>
+            <div class="metric-value" id="stat-block">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Chain ID</div>
+            <div class="metric-value" id="stat-chain">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">PID</div>
+            <div class="metric-value sm" id="stat-pid">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">RPC</div>
+            <div class="metric-value sm" id="stat-rpc">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accounts -->
+      <div class="card">
+        <div class="card-header">
+          <i class="bi bi-people ch-icon" aria-hidden="true"></i>
+          Account
+        </div>
+        <div class="accounts-list" id="accounts-list">
+          <p class="empty">Start the node to view available accounts</p>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ── RIGHT COLUMN ── -->
+    <div class="right-col">
+
+            <!-- ═══ TAB: NODE (default, sidebar ha i controlli ma mostriamo qui log + info) ═══ -->
+      <div id="tab-node" class="tab-content" >
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-info-circle ch-icon" aria-hidden="true"></i>
+            Node Status
+          </div>
+          <div class="card-body">
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">
+              Use the controls in the left column to start, stop, and update the local Hardhat node.
+              The node exposes a JSON-RPC endpoint compatible with EVM on the configured port.
+            </p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-list-ul ch-icon" aria-hidden="true"></i>
+            Activity Log
+            <button class="btn btn-ghost" style="margin-left:auto" onclick="clearLog()">
+              <i class="bi bi-trash3"></i> Clear
+            </button>
+          </div>
+          <div class="log-area" id="log-area" aria-live="polite" aria-label="Log activities">
+            <span class="log-line">// No activities — start by launching the node</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: TERMS OF USE ═══ -->
+      <div id="tab-policy" class="tab-content" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-file-earmark-check ch-icon" aria-hidden="true"></i>
+            Create Terms of Use (TermsOfUseV2)
+          </div>
+          <div class="card-body form-section">
+            <div class="form-row">
+              <div class="field">
+                <label for="tou-type">Type <span style="color:var(--red-700)">*</span></label>
+                <input type="text" id="tou-type" placeholder="es. license, policy, agreement" />
+              </div>
+              <div class="field">
+                <label for="tou-id">ID</label>
+                <input type="text" id="tou-id" placeholder="Identifier (optional)" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="field">
+                <label for="tou-hash-ipfs">Hash IPFS</label>
+                <input type="text" id="tou-hash-ipfs" placeholder="IPFS hash (optional)" />
+              </div>
+              <div class="field">
+                <label for="tou-hash-sp">Hash SP</label>
+                <input type="text" id="tou-hash-sp" placeholder="SP hash (optional)" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="tou-address-sp">Indirizzo SP</label>
+              <input type="text" id="tou-address-sp" placeholder="0x... (optional)" />
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="createTermsOfUse()">
+                <i class="bi bi-plus-circle"></i> Create Terms of Use
+              </button>
+            </div>
+            <div class="hash-result" id="tou-result" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: HASH ═══ -->
+      <div id="tab-hash" class="tab-content" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-fingerprint ch-icon" aria-hidden="true"></i>
+            Hash Calculation
+          </div>
+          <div class="card-body form-section">
+            <div class="field">
+              <label for="json-input">JSON to Process</label>
+              <textarea id="json-input" rows="5" placeholder='{"key": "value"}'></textarea>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="hashJson()">
+                <i class="bi bi-hash"></i>Calculate JSON Hash
+              </button>
+            </div>
+            <div class="hash-result" id="json-hash-result"></div>
+
+            <div class="divider" style="margin:8px 0"></div>
+
+            <div class="field">
+              <label for="bytecode-input">Bytecode</label>
+              <textarea id="bytecode-input" rows="5" placeholder="0x60806040..."></textarea>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="hashBytecode()">
+                <i class="bi bi-hash"></i> Calculate Bytecode Hash
+              </button>
+            </div>
+            <div class="hash-result" id="bytecode-hash-result"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: IPFS ═══ -->
+      <div id="tab-ipfs" class="tab-content" style="display:none">
+
+        <!-- Upload -->
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-cloud-upload ch-icon" aria-hidden="true"></i>
+            Upload Policy to IPFS
+            <span class="endpoint-badge">POST /ipfs/upload</span>
+          </div>
+          <div class="card-body form-section">
+            <div class="field">
+              <label for="upload-policy">Policy JSON (ODRL object)</label>
+              <textarea id="upload-policy" class="tall"
+                placeholder='{"@context":"http://www.w3.org/ns/odrl/2/","@type":"Set","uid":"http://example.com/policy:01","permission":[{"action":"use","target":"http://example.com/asset:01"}]}'></textarea>
+            </div>
+            <div>
+              <button class="btn btn-primary" id="btn-upload" onclick="doUpload()">
+                <i class="bi bi-upload"></i> Upload to IPFS
+              </button>
+            </div>
+            <div id="upload-res" class="result-box loading">// Waiting for input...</div>
+            <div id="upload-cid" style="display:none">
+              <div class="cid-pill">
+                <i class="bi bi-link-45deg"></i>
+                <span id="cid-text">—</span>
+                <i class="bi bi-copy cid-copy" onclick="copyCid()" title="Copia CID"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Retrieve -->
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-cloud-download ch-icon" aria-hidden="true"></i>
+            Retrieve from IPFS
+            <span class="endpoint-badge">GET /ipfs/:cid</span>
+          </div>
+          <div class="card-body form-section">
+            <div class="field">
+              <label for="get-cid">CID</label>
+              <input type="text" id="get-cid" placeholder="bafybeig..." />
+            </div>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="doGet()">
+                <i class="bi bi-arrow-clockwise"></i> Retrieve
+              </button>
+              <button class="btn" onclick="pasteLastCid()" id="btn-paste-cid">
+                <i class="bi bi-clipboard"></i> Use Last CID
+              </button>
+            </div>
+            <div id="get-res" class="result-box">// Enter a CID and click Retrieve...</div>
+            <div class="stat-row" id="get-stats" style="display:none">
+              <div class="stat-item">
+                <div class="si-label">Type</div>
+                <div class="si-value" id="gs-type">—</div>
+              </div>
+              <div class="stat-item">
+                <div class="si-label">Keys</div>
+                <div class="si-value" id="gs-keys">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: TRANSLATE ═══ -->
+      <div id="tab-translate" class="tab-content" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-arrow-left-right ch-icon" aria-hidden="true"></i>
+            Translate ODRL → Solidity
+            <span class="endpoint-badge">POST /translate</span>
+          </div>
+          <div class="card-body form-section">
+            <div class="form-row">
+              <div class="field">
+                <label for="tr-name">Output File Name</label>
+                <input type="text" id="tr-name" placeholder="ODRLPolicy" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="tr-policy">ODRL Policy in JSON</label>
+              <textarea id="tr-policy" class="tall"
+                placeholder='{"@context":"http://www.w3.org/ns/odrl/2/","@type":"Set","uid":"http://example.com/policy:01","permission":[{"action":"use","target":"http://example.com/asset:01"}]}'></textarea>
+            </div>
+            <div>
+              <button class="btn btn-primary" onclick="doTranslate()">
+                <i class="bi bi-magic"></i> Generate Contract
+              </button>
+            </div>
+            <div id="tr-res" class="result-box" style="min-height:72px">
+              // Enter the policy and click Generate Contract...
+            </div>
+            <div id="tr-stats" style="display:none">
+              <div class="stat-row">
+                <div class="stat-item">
+                  <div class="si-label">File output</div>
+                  <div class="si-value" id="ts-file">—</div>
+                </div>
+                <div class="stat-item">
+                  <div class="si-label">Lines</div>
+                  <div class="si-value" id="ts-lines">—</div>
+                </div>
+                <div class="stat-item">
+                  <div class="si-label">Contract</div>
+                  <div class="si-value" id="ts-name">—</div>
+                </div>
+              </div>
+            </div>
+            <div id="sol-preview" class="solidity-preview">
+              <div class="field">
+                <label>Generated Solidity Code</label>
+                <textarea id="sol-code" class="tall" readonly></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: DEPLOY ═══ -->
+      <div id="tab-deploy" class="tab-content" style="display:none">
+        <div class="card">
+          <div class="card-header">
+            <i class="bi bi-box-arrow-up-right ch-icon" aria-hidden="true"></i>
+            Deploy Contract
+          </div>
+          <div class="card-body form-section">
+            <div class="field">
+              <label for="deploy-source">Contract</label>
+              <select id="deploy-source">
+                <option value="">Select contract...</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="deploy-args">Constructor Arguments (JSON array, optional)</label>
+              <input type="text" id="deploy-args" placeholder='["arg1", 42]' />
+            </div>
+            <div>
+              <button class="btn-deploy" id="btn-deploy" onclick="deployContract()" disabled>
+                <i class="bi bi-box-arrow-up-right"></i> Deploy
+              </button>
+            </div>
+            <div class="deploy-response" id="deploy-response"></div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+    </div><!-- end right-col -->
+  </main>
+
+  <!-- ══════════════ FOOTER ══════════════ -->
+  <footer>
+    <span>ODRL SSI Policy  &nbsp;·&nbsp; v1.0.0-poc &nbsp;·&nbsp; localhost:3000</span>
+    <span>RPC: <span class="hl" id="footer-rpc">—</span></span>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <script src="js/script.js"></script>
+
+</body>
+</html>
